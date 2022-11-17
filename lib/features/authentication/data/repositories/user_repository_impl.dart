@@ -1,6 +1,6 @@
 import 'package:login_app/core/errors/exceptions/exceptions.dart';
 import 'package:login_app/features/authentication/data/datasources/remote_datasource/remote_datasource.dart';
-import 'package:login_app/features/authentication/domain/entities/user.dart';
+import 'package:login_app/features/authentication/data/models/user_model.dart';
 import 'package:login_app/core/errors/failures/failure.dart';
 import 'package:dartz/dartz.dart';
 import 'package:login_app/features/authentication/domain/repositories/user_repository.dart';
@@ -11,13 +11,8 @@ class UserRepositoryImpl implements UserRepository {
   const UserRepositoryImpl({required this.remoteDatasource});
 
   @override
-  Future<Either<Failure, User>> authStateChanges() async {
-    try {
-      final User user = await remoteDatasource.authStateChanges();
-      return Right(user);
-    } on AuthException catch (e) {
-      return Left(AuthFailure(e.message));
-    }
+  Stream<UserModel?> authStateChanges() {
+    return remoteDatasource.authStateChanges();
   }
 
   @override
@@ -55,11 +50,13 @@ class UserRepositoryImpl implements UserRepository {
       return Left(AuthFailure(e.message));
     }
   }
-  
+
   @override
-  Future<Either<Failure, void>> confirmPasswordReset(String code, String newPassword) async {
+  Future<Either<Failure, void>> confirmPasswordReset(
+      String code, String newPassword) async {
     try {
-      return Right(await remoteDatasource.confirmPasswordReset(code, newPassword));
+      return Right(
+          await remoteDatasource.confirmPasswordReset(code, newPassword));
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     }

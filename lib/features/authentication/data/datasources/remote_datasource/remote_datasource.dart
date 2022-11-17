@@ -8,7 +8,7 @@ abstract class RemoteDatasource {
   Future<void> register(String email, String password);
   Future<void> logout();
   Future<void> sendResetPasswordEmail(String email);
-  Future<UserModel> authStateChanges();
+  Stream<UserModel?> authStateChanges();
   Future<void> confirmPasswordReset(String code, String newPassword);
 }
 
@@ -20,14 +20,15 @@ class FirebaseRemoteDatasource implements RemoteDatasource {
   @override
   Future<void> login(String email, String password) async {
     try {
-      await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
     } on FirebaseAuthException catch (e) {
       throw AuthException(message: e.message ?? "Message is null");
     }
   }
 
   @override
-  Future<void> logout() async{
+  Future<void> logout() async {
     try {
       await firebaseAuth.signOut();
     } on FirebaseAuthException catch (e) {
@@ -38,9 +39,11 @@ class FirebaseRemoteDatasource implements RemoteDatasource {
   @override
   Future<void> register(String email, String password) async {
     try {
-      await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(message: e.message ?? "CreateUserWithEmailAndPassword exception");
+      throw AuthException(
+          message: e.message ?? "CreateUserWithEmailAndPassword exception");
     }
   }
 
@@ -49,33 +52,33 @@ class FirebaseRemoteDatasource implements RemoteDatasource {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(message: e.message ?? "SendPasswordResetEmail exception");
+      throw AuthException(
+          message: e.message ?? "SendPasswordResetEmail exception");
     }
   }
-  
+
   @override
-  Future<UserModel> authStateChanges() async {
-    try {
-      String email;
-      String uid;
-      bool isEmailVerified;
-
-      email = firebaseAuth.currentUser?.email ?? "E-mail is null";
-      uid = firebaseAuth.currentUser?.uid ?? "UID is null";
-      isEmailVerified = firebaseAuth.currentUser?.emailVerified ?? false;
-
-      return UserModel(uid: uid, email: email, isEmailVerified: isEmailVerified);
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(message: e.message ?? "AuthStateChange exception");
-    }
+  Stream<UserModel?> authStateChanges() {
+    return firebaseAuth.authStateChanges().asyncMap((firebaseUser) {
+      if (firebaseUser == null) {
+        return null;
+      } else {
+        return UserModel(
+            uid: firebaseUser.uid,
+            email: firebaseUser.email!,
+            isEmailVerified: firebaseUser.emailVerified);
+      }
+    });
   }
-  
+
   @override
   Future<void> confirmPasswordReset(String code, String newPassword) async {
     try {
-      await firebaseAuth.confirmPasswordReset(code: code, newPassword: newPassword);
+      await firebaseAuth.confirmPasswordReset(
+          code: code, newPassword: newPassword);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(message: e.message ?? "ConfirmPasswordReset exception");
+      throw AuthException(
+          message: e.message ?? "ConfirmPasswordReset exception");
     }
   }
 }
