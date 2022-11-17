@@ -50,7 +50,16 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, void>> sendResetPasswordEmail(String email) async {
     try {
-      return Right(await remoteDatasource.resetPassword(email));
+      return Right(await remoteDatasource.sendResetPasswordEmail(email));
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, void>> confirmPasswordReset(String code, String newPassword) async {
+    try {
+      return Right(await remoteDatasource.confirmPasswordReset(code, newPassword));
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     }

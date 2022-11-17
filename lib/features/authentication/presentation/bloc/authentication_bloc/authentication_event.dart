@@ -31,11 +31,21 @@ class LogoutEvent extends AuthenticationEvent {
   const LogoutEvent();
 }
 
-class ResetPasswordEvent extends AuthenticationEvent {
+class SendResetPasswordEvent extends AuthenticationEvent {
   final String email;
 
-  const ResetPasswordEvent({required this.email});
+  const SendResetPasswordEvent({required this.email});
 
   @override
   List<Object?> get props => [email];
+}
+
+class ConfirmPasswordResetEvent extends AuthenticationEvent {
+  final String code;
+  final String newPassword;
+
+  const ConfirmPasswordResetEvent({required this.code, required this.newPassword});
+
+  @override
+  List<Object?> get props => [code, newPassword];
 }

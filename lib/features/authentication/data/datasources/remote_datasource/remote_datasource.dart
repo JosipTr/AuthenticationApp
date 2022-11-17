@@ -7,8 +7,9 @@ abstract class RemoteDatasource {
   Future<void> login(String email, String password);
   Future<void> register(String email, String password);
   Future<void> logout();
-  Future<void> resetPassword(String email);
+  Future<void> sendResetPasswordEmail(String email);
   Future<UserModel> authStateChanges();
+  Future<void> confirmPasswordReset(String code, String newPassword);
 }
 
 class FirebaseRemoteDatasource implements RemoteDatasource {
@@ -44,7 +45,7 @@ class FirebaseRemoteDatasource implements RemoteDatasource {
   }
 
   @override
-  Future<void> resetPassword(String email) async {
+  Future<void> sendResetPasswordEmail(String email) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
@@ -66,6 +67,15 @@ class FirebaseRemoteDatasource implements RemoteDatasource {
       return UserModel(uid: uid, email: email, isEmailVerified: isEmailVerified);
     } on FirebaseAuthException catch (e) {
       throw AuthException(message: e.message ?? "AuthStateChange exception");
+    }
+  }
+  
+  @override
+  Future<void> confirmPasswordReset(String code, String newPassword) async {
+    try {
+      await firebaseAuth.confirmPasswordReset(code: code, newPassword: newPassword);
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(message: e.message ?? "ConfirmPasswordReset exception");
     }
   }
 }
