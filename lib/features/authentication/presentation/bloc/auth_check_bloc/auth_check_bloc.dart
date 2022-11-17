@@ -14,6 +14,7 @@ class AuthCheckBloc extends Bloc<AuthCheckEvent, AuthCheckState> {
 
   void _onAppStarted(
       ApplicationStartedEvent event, Emitter<AuthCheckState> emit) async {
+        emit(const AuthCheckInitState());
     emit.onEach(authStateChanges.call(),
         onData: (user) => add(AuthStateChangesEvent(user: user)));
   }
