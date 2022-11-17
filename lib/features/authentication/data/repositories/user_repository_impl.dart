@@ -16,7 +16,7 @@ class UserRepositoryImpl implements UserRepository {
       final User user = await remoteDatasource.authStateChanges();
       return Right(user);
     } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message));
+      return Left(AuthFailure(e.message));
     }
   }
 
@@ -25,7 +25,7 @@ class UserRepositoryImpl implements UserRepository {
     try {
       return Right(await remoteDatasource.login(email, password));
     } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message));
+      return Left(AuthFailure(e.message));
     }
   }
 
@@ -34,7 +34,7 @@ class UserRepositoryImpl implements UserRepository {
     try {
       return Right(await remoteDatasource.logout());
     } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message));
+      return Left(AuthFailure(e.message));
     }
   }
 
@@ -43,16 +43,16 @@ class UserRepositoryImpl implements UserRepository {
     try {
       return Right(await remoteDatasource.register(email, password));
     } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message));
+      return Left(AuthFailure(e.message));
     }
   }
 
   @override
-  Future<Either<Failure, void>> resetPassword(String email) async {
+  Future<Either<Failure, void>> sendResetPasswordEmail(String email) async {
     try {
       return Right(await remoteDatasource.resetPassword(email));
     } on AuthException catch (e) {
-      return Left(AuthFailure(message: e.message));
+      return Left(AuthFailure(e.message));
     }
   }
 }

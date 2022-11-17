@@ -3,12 +3,12 @@ import 'package:login_app/features/authentication/domain/repositories/user_repos
 
 import '../../../../core/errors/failures/failure.dart';
 
-class ResetPassord {
+class SendResetPasswordEmail {
   final UserRepository repository;
 
-  const ResetPassord({required this.repository});
+  const SendResetPasswordEmail({required this.repository});
 
   Future<Either<Failure, void>> call(String email) async {
-    return await repository.resetPassword(email);
+    return await repository.sendResetPasswordEmail(email);
   }
 }

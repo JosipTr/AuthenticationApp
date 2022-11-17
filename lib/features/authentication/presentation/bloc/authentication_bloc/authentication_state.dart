@@ -22,13 +22,16 @@ class LoadingState extends AuthenticationState {
 }
 
 class SuccessState extends AuthenticationState {
-  const SuccessState();
+  final String message;
+  const SuccessState({required this.message});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [message];
 }
 
 class FailureState extends AuthenticationState {
-  const FailureState();
+  final String message;
+  const FailureState({required this.message});
+  @override
+  List<Object?> get props => [message];
 }
-
