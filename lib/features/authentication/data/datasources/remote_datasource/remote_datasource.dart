@@ -11,10 +11,10 @@ abstract class RemoteDatasource {
   Future<UserModel> authStateChanges();
 }
 
-class FirebaseRemoteDatasource extends RemoteDatasource {
+class FirebaseRemoteDatasource implements RemoteDatasource {
   final FirebaseAuth firebaseAuth;
 
-  FirebaseRemoteDatasource({required this.firebaseAuth});
+  const FirebaseRemoteDatasource({required this.firebaseAuth});
 
   @override
   Future<void> login(String email, String password) async {
